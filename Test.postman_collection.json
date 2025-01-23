@@ -1,0 +1,657 @@
+{
+	"info": {
+		"_postman_id": "3951ec1e-19f0-402f-8abb-91b60f158f6c",
+		"name": "Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37643341"
+	},
+	"item": [
+		{
+			"name": "Get User Management Copy",
+			"item": [
+				{
+					"name": "Positive - Get User Management",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"var value = jsonData.value \r",
+									"pm.test(\"User Id = \"+value.userId, function(){\r",
+									"    pm.expect(value.userId).to.eql(jsonData.value.userId);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Name = \"+value.name, function(){\r",
+									"    pm.expect(value.name).to.eql(jsonData.value.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Position = \"+value.position, function(){\r",
+									"    pm.expect(value.position).to.eql(jsonData.value.position);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email = \"+value.email, function(){\r",
+									"    pm.expect(value.email).to.eql(jsonData.value.email);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"No Hp = \"+value.hpNumber,function(){\r",
+									"    pm.expect(value.hpNumber).to.eql(jsonData.value.hpNumber);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": \"{{userCode}}\",\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" :\"{{userId_site}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative - Get User Management dengan userCode null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error Status = \"+jsonData.errorStatus, function(){\r",
+									"    pm.expect(true)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Code = \"+jsonData.errorCode, function(){\r",
+									"    pm.expect(jsonData.errorCode).to.eql(jsonData.errorCode)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Message = \"+jsonData.errorMessage, function(){\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(jsonData.errorMessage);\r",
+									"} )"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": null,\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" :\"{{userId_site}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative - Get User Management tanpa userCode",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error Status = \"+jsonData.errorStatus, function(){\r",
+									"    pm.expect(true)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Code = \"+jsonData.errorCode, function(){\r",
+									"    pm.expect(jsonData.errorCode).to.eql(jsonData.errorCode)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Message = \"+jsonData.errorMessage, function(){\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(jsonData.errorMessage);\r",
+									"} )"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": \"\",\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" :\"{{userId_site}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative - Get User Management dengan invalid userCode",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error Status = \"+jsonData.errorStatus, function(){\r",
+									"    pm.expect(true)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Code = \"+jsonData.errorCode, function(){\r",
+									"    pm.expect(jsonData.errorCode).to.eql(jsonData.errorCode)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Message = \"+jsonData.errorMessage, function(){\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(jsonData.errorMessage);\r",
+									"} )"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": \"asd\",\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" :\"{{userId_site}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative - Get User Management dengan userId null",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error Status = \"+jsonData.errorStatus, function(){\r",
+									"    pm.expect(true)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Code = \"+jsonData.errorCode, function(){\r",
+									"    pm.expect(jsonData.errorCode).to.eql(jsonData.errorCode)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Message = \"+jsonData.errorMessage, function(){\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(jsonData.errorMessage);\r",
+									"} )"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": {{userCode}},\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" : null\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative - Get User Management tanpa userId",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error Status = \"+jsonData.errorStatus, function(){\r",
+									"    pm.expect(true)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Code = \"+jsonData.errorCode, function(){\r",
+									"    pm.expect(jsonData.errorCode).to.eql(jsonData.errorCode)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Message = \"+jsonData.errorMessage, function(){\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(jsonData.errorMessage);\r",
+									"} )"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": {{userCode}},\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" : \"\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative - Get User Management dengan invalid userId",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"url = \"https://dev-apiv1.1000saudara.com/auth/access\"\r",
+									"pm.sendRequest({\r",
+									"    url: url,\r",
+									"    method: \"POST\",\r",
+									"    header: {\r",
+									"        'X-MSSAPI-KEY': 'DPEqC6x0Rh8eU5QhtjS1'\r",
+									"    }\r",
+									"}, function (err, res) {\r",
+									"     if (err) {\r",
+									"        console.error('Error dalam permintaan GET:', err);\r",
+									"    }  else {\r",
+									"        // Mengambil body respons sebagai json\r",
+									"        var textResponse = res.status;\r",
+									"        var textToken = res.json().token;\r",
+									"\r",
+									"        // Log teks respons untuk verifikasi\r",
+									"        console.log('Teks respons:', textToken);\r",
+									"        pm.environment.set(\"access_token\", textToken);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Error Status = \"+jsonData.errorStatus, function(){\r",
+									"    pm.expect(true)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Code = \"+jsonData.errorCode, function(){\r",
+									"    pm.expect(jsonData.errorCode).to.eql(jsonData.errorCode)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Error Message = \"+jsonData.errorMessage, function(){\r",
+									"    pm.expect(jsonData.errorMessage).to.eql(jsonData.errorMessage);\r",
+									"} )"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\": \"\",\r\n    \"UserCode\": {{userCode}},\r\n    \"Origins\": {\r\n        \"Source\": \"app_mitra\",\r\n        \"Version\": \"\"\r\n    },\r\n    \"Value\": {\r\n        \"UserId\" : \"asd\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/User/GetUserManagement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"User",
+								"GetUserManagement"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
