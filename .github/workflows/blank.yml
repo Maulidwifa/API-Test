@@ -83,33 +83,45 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman tests with Newman
-        run: newman run Test.postman_collection.json --environment Development.postman_environment.json
+        run: |
+          newman run Test.postman_collection.json --environment Development.postman_environment.json --reporters cli,json --reporter-json-export newman-report.json
         id: newman_run
 
-      # - name: Show Newman test results
-      #   run: cat newman-report.json
+      - name: Debug if `newman-report.json` exists
+        run: |
+          if [ -f newman-report.json ]; then
+            echo "File newman-report.json exists"
+            cat newman-report.json
+          else
+            echo "File newman-report.json does not exist!"
+          fi
 
       - name: Set status message based on Newman result
         id: status_message
         run: |
-          # Cek apakah Newman sukses atau gagal
-          RESULT=$(cat newman-report.json)
-          PASSED=$(echo $RESULT | jq '.run.stats.assertions.passed')
-          FAILED=$(echo $RESULT | jq '.run.stats.assertions.failed')
+          # Cek apakah file `newman-report.json` ada
+          if [ -f newman-report.json ]; then
+            RESULT=$(cat newman-report.json)
+            PASSED=$(echo $RESULT | jq '.run.stats.assertions.passed')
+            FAILED=$(echo $RESULT | jq '.run.stats.assertions.failed')
 
-          if [ "$FAILED" -gt 0 ]; then
-            # Jika ada test yang gagal, tampilkan pesan error
-            STATUS="Test Failed"
-            ERROR_DETAILS=$(echo $RESULT | jq '.run.failures')
+            if [ "$FAILED" -gt 0 ]; then
+              # Jika ada test yang gagal, tampilkan pesan error
+              STATUS="Test Failed"
+              ERROR_DETAILS=$(echo $RESULT | jq '.run.failures')
+            else
+              # Jika semua test berhasil, tampilkan pesan success
+              STATUS="Success"
+              ERROR_DETAILS="All tests passed successfully."
+            fi
+
+            # Simpan status dan detail error
+            echo "STATUS=$STATUS" >> $GITHUB_ENV
+            echo "ERROR_DETAILS=$ERROR_DETAILS" >> $GITHUB_ENV
           else
-            # Jika semua test berhasil, tampilkan pesan success
-            STATUS="Success"
-            ERROR_DETAILS="All tests passed successfully."
+            echo "Error: File newman-report.json not found!"
+            exit 1
           fi
-
-          # Simpan status dan detail error
-          echo "STATUS=$STATUS" >> $GITHUB_ENV
-          echo "ERROR_DETAILS=$ERROR_DETAILS" >> $GITHUB_ENV
       
       # - name: Show Newman test results
       #   run: echo "Test results: ${{steps.newman_run.outputs.summary}}"
