@@ -105,7 +105,7 @@ jobs:
                   "content": [
                     {
                       "type": "text/plain",
-                      "value": "The Postman tests have completed. Here are the results: `${{ steps.newman_run.outputs.summary }}`"
+                      "value": "The Postman tests have completed. Here are the results: $steps.newman_run.outputs.summary"
                     }
                   ]
                 }')
