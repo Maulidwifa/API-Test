@@ -53,11 +53,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'  # Menggunakan Node.js versi 16 atau lebih tinggi
 
       - name: Install dependencies
         run: npm install
 
       - name: Run Postman tests with Newman
         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
+
 
