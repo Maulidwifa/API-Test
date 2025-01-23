@@ -109,6 +109,6 @@ jobs:
                     }
                   ]
                 }')
-          echo "Response from SendGrid: ${{response}}"
+          echo "Response from SendGrid: $response"
 
 
