@@ -57,60 +57,6 @@
 #       - name: List files for debugging
 #         run: ls -R
 
-# name: CI/CD with Postman and SendGrid
-
-# on:
-#   schedule:
-#     - cron: '*/5 * * * *'  # Menjalankan setiap 5 menit sekali
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Set up Node.js
-#         uses: actions/setup-node@v2
-#         with:
-#           node-version: '16'
-
-#       - name: Install Newman globally
-#         run: npm install -g newman
-
-#       - name: Run Postman tests with Newman
-#         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
-#         id: newman_run
-
-#       # - name: Show Newman test results
-#       #   echo "Test results: '${{ steps.newman_run.outputs.summary }}'"
-
-#       - name: Send email notification via SendGrid
-#         run: |
-#           response=$(curl -X POST https://api.sendgrid.com/v3/mail/send \
-#             -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
-#             -H "Content-Type: application/json" \
-#             -d '{
-#                   "personalizations": [
-#                     {
-#                       "to": [{"email": "maulidwifairuz@gmail.com"}],
-#                       "subject": "Postman Test Results"
-#                     }
-#                   ],
-#                   "from": {"email": "${{ secrets.SENDGRID_EMAIL }}"},
-#                   "content": [
-#                     {
-#                       "type": "text/plain",
-#                       "value": "The Postman tests have completed. Here are the results: ${{ steps.newman_run.outputs.summary }}"
-#                     }
-#                   ]
-#                 }')
-#           echo "Response from SendGrid: $response"
-
 name: CI/CD with Postman and SendGrid
 
 on:
@@ -137,16 +83,14 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman tests with Newman
-        run: newman run Test.postman_collection.json --environment Development.postman_environment.json --reporters cli,json --reporter-json-export newman-report.json
+        run: newman run Test.postman_collection.json --environment Development.postman_environment.json
         id: newman_run
 
-      - name: Show Newman test results
-        run: cat newman-report.json
+      # - name: Show Newman test results
+      #   echo "Test results: '${{ steps.newman_run.outputs.summary }}'"
 
       - name: Send email notification via SendGrid
         run: |
-          NEWMAN_REPORT=$(cat newman-report.json)
-          echo "Newman Report: $NEWMAN_REPORT"
           response=$(curl -X POST https://api.sendgrid.com/v3/mail/send \
             -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
             -H "Content-Type: application/json" \
@@ -161,10 +105,10 @@ jobs:
                   "content": [
                     {
                       "type": "text/plain",
-                      "value": "The Postman tests have completed. Here are the results: $NEWMAN_REPORT"
+                      "value": "The Postman tests have completed. Here are the results: '${{ steps.newman_run.outputs.summary }}'"
                     }
                   ]
                 }')
-          echo "Response from SendGrid: $response"
+          echo "Response from SendGrid: ${{response}}"
 
 
