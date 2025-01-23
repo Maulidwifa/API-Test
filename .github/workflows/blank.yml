@@ -87,7 +87,7 @@ jobs:
         id: newman_run
 
       - name: Show Newman test results
-        run: echo "Test results: '${{ steps.newman_run.outputs.summary }}'"
+        echo "Test results: '${{ steps.newman_run.outputs.summary }}'"
 
       - name: Send email notification via SendGrid
         run: |
