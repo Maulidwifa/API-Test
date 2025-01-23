@@ -66,6 +66,28 @@ jobs:
 
       - name: Run Postman tests with Newman
         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
+        id: newman_run
+
+      - name: Send email notification via SendGrid
+        run: |
+          curl -X POST https://api.sendgrid.com/v3/mail/send \
+            -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "personalizations": [
+                    {
+                      "to": [{"email": "maulidwifairuz@gmail.com"}],
+                      "subject": "Postman Test Results"
+                    }
+                  ],
+                  "from": {"email": "${{ secrets.SENDGRID_EMAIL }}"},
+                  "content": [
+                    {
+                      "type": "text/plain",
+                      "value": "The Postman tests have completed. Here are the results: ${{ steps.newman_run.outputs.summary }}"
+                    }
+                  ]
+                }'
 
       - name: List files for debugging
         run: ls -R
