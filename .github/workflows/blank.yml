@@ -55,10 +55,9 @@ jobs:
         with:
           node-version: '16'  # Menggunakan Node.js versi 16 atau lebih tinggi
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Newman globally
+        run: npm install -g newman  # Install Newman jika belum terinstal
 
       - name: Run Postman tests with Newman
         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
-
 
