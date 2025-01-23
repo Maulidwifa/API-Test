@@ -59,6 +59,10 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman tests with Newman
-        run: newman run Test.postman_collection.json --environment postman/Development.postman_environment.json
+        run: newman run Test.postman_collection.json --environment Development.postman_environment.json
+
+      - name: List files for debugging
+        run: ls -R
+
 
 
