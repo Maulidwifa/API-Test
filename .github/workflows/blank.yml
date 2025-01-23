@@ -1,49 +1,67 @@
-# # This is a basic workflow to help you get started with Actions
+# This is a basic workflow to help you get started with Actions
 
-# name: CI
+# name: CI/CD with Postman
 
-# # Controls when the workflow will run
 # on:
-#   # Triggers the workflow on push or pull request events but only for the "main" branch
+#   schedule:
+#     # - cron: '0 0 */4 * *'  # Menjalankan setiap 4 jam sekali pada waktu UTC
+#     # - cron: '30 5 * * 1,3'  # Menjalankan setiap Senin dan Rabu pukul 5:30 AM UTC
+#     # - cron: '30 5 * * 2,4'  # Menjalankan setiap Selasa dan Kamis pukul 5:30 AM UTC
+#     - cron: '*/5 * * * *'
+  
 #   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+#     branches:
+#       - main
 
-#   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
-
-# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 # jobs:
-#   # This workflow contains a single job called "build"
-#   build:
-#     # The type of runner that the job will run on
+#   test:
 #     runs-on: ubuntu-latest
 
-#     # Steps represent a sequence of tasks that will be executed as part of the job
 #     steps:
-#       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#       - uses: actions/checkout@v4
+#       - name: Checkout code
+#         uses: actions/checkout@v2
 
-#       # Runs a single command using the runners shell
-#       - name: Run a one-line script
-#         run: echo Hello, world!
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: '16'
 
-#       # Runs a set of commands using the runners shell
-#       - name: Run a multi-line script
+#       - name: Install Newman globally
+#         run: npm install -g newman
+
+#       - name: Run Postman tests with Newman
+#         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
+#         id: newman_run
+
+#       - name: Send email notification via SendGrid
 #         run: |
-#           echo Add other actions to build,
-#           echo test, and deploy your project.
+#           curl -X POST https://api.sendgrid.com/v3/mail/send \
+#             -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+#             -H "Content-Type: application/json" \
+#             -d '{
+#                   "personalizations": [
+#                     {
+#                       "to": [{"email": "maulidwifairuz@gmail.com"}],
+#                       "subject": "Postman Test Results"
+#                     }
+#                   ],
+#                   "from": {"email": "${{ secrets.SENDGRID_EMAIL }}"},
+#                   "content": [
+#                     {
+#                       "type": "text/plain",
+#                       "value": "The Postman tests have completed. Here are the results: ${{ steps.newman_run.outputs.summary }}"
+#                     }
+#                   ]
+#                 }'
 
-name: CI/CD with Postman
+#       - name: List files for debugging
+#         run: ls -R
+
+name: CI/CD with Postman and SendGrid
 
 on:
   schedule:
-    # - cron: '0 0 */4 * *'  # Menjalankan setiap 4 jam sekali pada waktu UTC
-    # - cron: '30 5 * * 1,3'  # Menjalankan setiap Senin dan Rabu pukul 5:30 AM UTC
-    # - cron: '30 5 * * 2,4'  # Menjalankan setiap Selasa dan Kamis pukul 5:30 AM UTC
-    - cron: '*/5 * * * *'
-  
+    - cron: '*/5 * * * *'  # Menjalankan setiap 5 menit sekali
   push:
     branches:
       - main
@@ -68,9 +86,12 @@ jobs:
         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
         id: newman_run
 
+      - name: Show Newman test results
+        run: echo "Test results: '${{ steps.newman_run.outputs.summary }}'"
+
       - name: Send email notification via SendGrid
         run: |
-          curl -X POST https://api.sendgrid.com/v3/mail/send \
+          response=$(curl -X POST https://api.sendgrid.com/v3/mail/send \
             -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
@@ -87,7 +108,6 @@ jobs:
                       "value": "The Postman tests have completed. Here are the results: ${{ steps.newman_run.outputs.summary }}"
                     }
                   ]
-                }'
+                }')
+          echo "Response from SendGrid: $response"
 
-      - name: List files for debugging
-        run: ls -R
