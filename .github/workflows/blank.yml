@@ -86,8 +86,8 @@ jobs:
         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
         id: newman_run
 
-      - name: Show Newman test results
-        run: cat newman-report.json
+      # - name: Show Newman test results
+      #   run: cat newman-report.json
 
       - name: Set status message based on Newman result
         id: status_message
