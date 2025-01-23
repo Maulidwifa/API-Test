@@ -122,9 +122,6 @@ jobs:
             echo "Error: File newman-report.json not found!"
             exit 1
           fi
-      
-      # - name: Show Newman test results
-      #   run: echo "Test results: ${{steps.newman_run.outputs.summary}}"
 
       - name: Send email notification via SendGrid
         run: |
@@ -142,11 +139,13 @@ jobs:
                   "content": [
                     {
                       "type": "text/plain",
-                      # "value": "The Postman tests have completed. Here are the results: ${{steps.newman_run.outputs.summary}}"
                       "value": "The Postman tests have completed. Status: ${{ env.STATUS }}. Details: ${{ env.ERROR_DETAILS }}"
                     }
                   ]
                 }')
+      
           echo "Response from SendGrid: $response"
+          # Jika perlu, tampilkan status code HTTP
+          echo "HTTP Status Code: $(echo $response | jq -r '.statusCode')"
 
 
