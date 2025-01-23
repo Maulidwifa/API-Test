@@ -86,8 +86,33 @@ jobs:
         run: newman run Test.postman_collection.json --environment Development.postman_environment.json
         id: newman_run
 
+      - name: Show Newman test results
+        run: cat newman-report.json
+
+      - name: Set status message based on Newman result
+        id: status_message
+        run: |
+          # Cek apakah Newman sukses atau gagal
+          RESULT=$(cat newman-report.json)
+          PASSED=$(echo $RESULT | jq '.run.stats.assertions.passed')
+          FAILED=$(echo $RESULT | jq '.run.stats.assertions.failed')
+
+          if [ "$FAILED" -gt 0 ]; then
+            # Jika ada test yang gagal, tampilkan pesan error
+            STATUS="Test Failed"
+            ERROR_DETAILS=$(echo $RESULT | jq '.run.failures')
+          else
+            # Jika semua test berhasil, tampilkan pesan success
+            STATUS="Success"
+            ERROR_DETAILS="All tests passed successfully."
+          fi
+
+          # Simpan status dan detail error
+          echo "STATUS=$STATUS" >> $GITHUB_ENV
+          echo "ERROR_DETAILS=$ERROR_DETAILS" >> $GITHUB_ENV
+      
       # - name: Show Newman test results
-      #   echo "Test results: '${{ steps.newman_run.outputs.summary }}'"
+      #   run: echo "Test results: ${{steps.newman_run.outputs.summary}}"
 
       - name: Send email notification via SendGrid
         run: |
@@ -105,7 +130,8 @@ jobs:
                   "content": [
                     {
                       "type": "text/plain",
-                      "value": "The Postman tests have completed. Here are the results: ${{steps.newman_run.outputs.summary}}"
+                      # "value": "The Postman tests have completed. Here are the results: ${{steps.newman_run.outputs.summary}}"
+                      "value": "The Postman tests have completed. Status: ${{ env.STATUS }}. Details: ${{ env.ERROR_DETAILS }}"
                     }
                   ]
                 }')
