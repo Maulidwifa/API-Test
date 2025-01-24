@@ -150,5 +150,3 @@ jobs:
           echo "Response from SendGrid: $response"
           # Jika perlu, tampilkan status code HTTP
           echo "HTTP Status Code: $(echo $response | jq -r '.statusCode')"
-
-
