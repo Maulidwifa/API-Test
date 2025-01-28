@@ -129,7 +129,7 @@ jobs:
       - name: Send email notification via SendGrid
         run: |
           response=$(curl -X POST https://api.sendgrid.com/v3/mail/send \
-            -H "Authorization: Bearer ${{ secrets.MAULID_APIKEYSENDGRID }}" \    #Ini diupdate apikey nya
+            -H "Authorization: Bearer ${{ secrets.MAULID_APIKEYSENDGRID }}" \
             -H "Content-Type: application/json" \
             -d '{
                   "personalizations": [
