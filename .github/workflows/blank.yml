@@ -46,56 +46,6 @@ jobs:
           --reporters cli,json \
           --reporter-json-export newman-report.json
 
-      # - name: Set status message based on Newman result
-      #   id: status_message
-      #   run: |
-      #     # Cek apakah file `newman-report.json` ada
-      #     if [ -f newman-report.json ]; then
-      #       RESULT=$(cat newman-report.json)
-      #       PASSED=$(echo $RESULT | jq '.run.stats.assertions.passed')
-      #       FAILED=$(echo $RESULT | jq '.run.stats.assertions.failed')
-      #       NAME=$(echo $RESULT | jq -r '.collection.item[0].name')
-
-      #       if [ "$FAILED" -gt 0 ]; then
-      #         # Jika ada test yang gagal, tampilkan pesan error
-      #         STATUS="Test Failed"
-      #         ERROR_DETAILS=$(echo $RESULT | jq '.run.failures')
-      #       else
-      #         # Jika semua test berhasil, tampilkan pesan success
-      #         STATUS="Success"
-      #         ERROR_DETAILS="All tests passed successfully."
-      #       fi
-
-      #       # Simpan status dan detail error
-      #       echo "STATUS=$STATUS" >> $GITHUB_ENV
-      #       echo "ERROR_DETAILS=$ERROR_DETAILS" >> $GITHUB_ENV
-      #       echo "NAME=$NAME" >> $GITHUB_ENV
-      #     else
-      #       echo "Error: File newman-report.json not found!"
-      #       exit 1
-      #     fi
-
-      # - name: Send email notification via SendGrid
-      #   run: |
-      #     response=$(curl -X POST https://api.sendgrid.com/v3/mail/send \
-      #       -H "Authorization: Bearer ${{ secrets.MAULID_APIKEYSENDGRID }}" \
-      #       -H "Content-Type: application/json" \
-      #       -d '{
-      #             "personalizations": [
-      #               {
-      #                 "to": [{"email": "maulidwifairuz@gmail.com"}],
-      #                 "subject": "Postman Test Results for ${{ env.NAME }}"
-      #               }
-      #             ],
-      #             "from": {"email": "${{ secrets.SENDGRID_EMAIL }}"},
-      #             "content": [
-      #               {
-      #                 "type": "text/plain",
-      #                 "value": ""The Postman tests for : ${{ env.NAME }} have completed. Status: ${{ env.STATUS }}.\nDetails: ${{ env.ERROR_DETAILS }}"
-      #               }
-      #             ]
-      #           }')
-
       - name: Set status message based on Newman result
         id: status_message
         run: |
@@ -141,7 +91,7 @@ jobs:
                   "content": [
                     {
                       "type": "text/plain",
-                      "value": "The Postman tests for: ${{ env.NAME }} have completed. Status: ${{ env.STATUS }}.\nDetails: ${{ env.ERROR_DETAILS }}"
+                      "value": "The Postman tests for: ${{ env.NAME }} have completed. \nStatus: ${{ env.STATUS }}.\nDetails: ${{ env.ERROR_DETAILS }}"
                     }
                   ]
                 }')
