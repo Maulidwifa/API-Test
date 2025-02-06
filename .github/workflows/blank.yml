@@ -54,6 +54,7 @@ jobs:
             RESULT=$(cat newman-report.json)
             PASSED=$(echo $RESULT | jq '.run.stats.assertions.passed')
             FAILED=$(echo $RESULT | jq '.run.stats.assertions.failed')
+            NAME=$(echo $RESULT | jq -r '.collection.item[0].name')
 
             if [ "$FAILED" -gt 0 ]; then
               # Jika ada test yang gagal, tampilkan pesan error
@@ -68,6 +69,7 @@ jobs:
             # Simpan status dan detail error
             echo "STATUS=$STATUS" >> $GITHUB_ENV
             echo "ERROR_DETAILS=$ERROR_DETAILS" >> $GITHUB_ENV
+            echo "NAME=$NAME" >> $GITHUB_ENV
           else
             echo "Error: File newman-report.json not found!"
             exit 1
@@ -82,14 +84,14 @@ jobs:
                   "personalizations": [
                     {
                       "to": [{"email": "maulidwifairuz@gmail.com"}],
-                      "subject": "Postman Test Results"
+                      "subject": "Postman Test Results for ${{ env.NAME }}"
                     }
                   ],
                   "from": {"email": "${{ secrets.SENDGRID_EMAIL }}"},
                   "content": [
                     {
                       "type": "text/plain",
-                      "value": "The Postman tests have completed. Status: ${{ env.STATUS }}.\nDetails: ${{ env.ERROR_DETAILS }}"
+                      "value": ""The Postman tests for : ${{ env.NAME }} have completed. Status: ${{ env.STATUS }}.\nDetails: ${{ env.ERROR_DETAILS }}"
                     }
                   ]
                 }')
