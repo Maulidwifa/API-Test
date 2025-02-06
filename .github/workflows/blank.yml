@@ -134,21 +134,18 @@ jobs:
                   "personalizations": [
                     {
                       "to": [{"email": "maulidwifairuz@gmail.com"}],
-                      "subject": "Postman Test Results for '${{ env.NAME }}'"
+                      "subject": "Postman Test Results for ${{ env.NAME }}"
                     }
                   ],
                   "from": {"email": "${{ secrets.SENDGRID_EMAIL }}"},
                   "content": [
                     {
                       "type": "text/plain",
-                      "value": "The Postman tests for: '${{ env.NAME }}' have completed. Status: '${{ env.STATUS }}'.\nDetails: '${{ env.ERROR_DETAILS }}'"
+                      "value": "The Postman tests for: ${{ env.NAME }} have completed. Status: ${{ env.STATUS }}.\nDetails: ${{ env.ERROR_DETAILS }}"
                     }
                   ]
                 }')
       
-          # Tampilkan response dari API SendGrid (untuk debugging)
-          echo $response
-
           # Tampilkan response dari API SendGrid (untuk debugging)
           echo $response
 
